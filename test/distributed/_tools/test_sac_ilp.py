@@ -17,7 +17,7 @@ from torch.distributed._tools.sac_ilp import (
     get_optimal_checkpointing_policy_per_module,
     sac_milp,
 )
-from torch.testing._internal.common_cuda import TEST_CUDA
+# from torch.testing._internal.common_cuda import TEST_CUDA
 from torch.testing._internal.common_utils import (
     MI300_ARCH,
     run_tests,
@@ -34,7 +34,8 @@ from torch.testing._internal.distributed._tensor.common_dtensor import (
 class TestSACILP(TestCase):
     def setUp(self):
         super().setUp()
-        self.device = torch.cuda.current_device()
+        # self.device = torch.cuda.current_device()
+        self.device = torch.device(torch.accelerator.current_device_index())
         self.estimate_mode = "operator-level-cost-model"
 
     def _init_model_input_optimizer(
@@ -135,7 +136,7 @@ class TestSACILP(TestCase):
         return mod_info
 
     @skipIfTorchDynamo("https://github.com/pytorch/pytorch/issues/115653")
-    @unittest.skipIf(not TEST_CUDA, "CUDA not available")
+    @unittest.skipIf(not torch.accelerator.is_available(), "Accelerator not available")
     @skipIfRocmArch(MI300_ARCH)
     def test_sac_ilp_case1(self):
         """
@@ -178,7 +179,7 @@ class TestSACILP(TestCase):
         )
 
     @skipIfTorchDynamo("https://github.com/pytorch/pytorch/issues/115653")
-    @unittest.skipIf(not TEST_CUDA, "CUDA not available")
+    @unittest.skipIf(not torch.accelerator.is_available(), "Accelerator not available")
     def test_sac_ilp_case2(self):
         """
         This is a case where the memory budget is not binding, meaning that no
@@ -194,7 +195,7 @@ class TestSACILP(TestCase):
         self.assertGreater(peak_mem, 1)
 
     @skipIfTorchDynamo("https://github.com/pytorch/pytorch/issues/115653")
-    @unittest.skipIf(not TEST_CUDA, "CUDA not available")
+    @unittest.skipIf(not torch.accelerator.is_available(), "Accelerator not available")
     def test_sac_ilp_case3(self):
         """
         This is a case where the memory budget is too tight, meaning that even with
@@ -237,7 +238,7 @@ class TestOptimalCheckpointingPolicy(TestCase):
         )
 
     @skipIfTorchDynamo("https://github.com/pytorch/pytorch/issues/115653")
-    @unittest.skipIf(not TEST_CUDA, "CUDA not available")
+    @unittest.skipIf(not torch.accelerator.is_available(), "Accelerator not available")
     def test_get_optimial_checkpointing_policy_per_module(self):
         for memory_budget, optimal_soln in [
             (0, [1, 0, 0, 0, 1, 0, 0, 0]),

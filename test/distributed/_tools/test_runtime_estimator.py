@@ -7,7 +7,7 @@ import torch
 from torch import nn, optim
 from torch._subclasses.fake_tensor import FakeTensorMode
 from torch.distributed._tools.runtime_estimator import RuntimeEstimator
-from torch.testing._internal.common_cuda import TEST_CUDA
+# from torch.testing._internal.common_cuda import TEST_CUDA
 from torch.testing._internal.common_utils import run_tests, skipIfTorchDynamo, TestCase
 from torch.testing._internal.distributed._tensor.common_dtensor import (
     ModelArgs,
@@ -70,21 +70,23 @@ class TestRuntimeEstimator(TestCase):
         optimizer.step()
         optimizer.zero_grad()
 
-    def _measure_actual_cuda_time(
+    def _measure_actual_accelerator_time(
         self,
         func: Callable,
         args: tuple[Any, ...],
     ) -> float:
         warmup_iters, actual_iters = 2, 5
-        start_event = torch.cuda.Event(enable_timing=True)
-        end_event = torch.cuda.Event(enable_timing=True)
+        # start_event = torch.cuda.Event(enable_timing=True)
+        start_event = torch.Event(enable_timing=True)
+        # end_event = torch.cuda.Event(enable_timing=True)
+        end_event = torch.Event(enable_timing=True)
         for _ in range(warmup_iters):
             func(*args)
         start_event.record()
         for _ in range(actual_iters):
             func(*args)
         end_event.record()
-        torch.cuda.synchronize()
+        torch.accelerator.synchronize()
         measured_time = start_event.elapsed_time(end_event) / actual_iters
         return measured_time
 
@@ -107,7 +109,7 @@ class TestRuntimeEstimator(TestCase):
         model_args: Union[ConvArgs, ModelArgs],
         bsz: int,
     ) -> tuple[nn.Module, optim.Optimizer, torch.Tensor]:
-        dev = torch.cuda.current_device()
+        dev = torch.device(torch.accelerator.current_device_index())
         if model_type == "Transformer":
             model_args = cast(ModelArgs, model_args)
             with torch.device(dev):
@@ -129,7 +131,7 @@ class TestRuntimeEstimator(TestCase):
         return (model, optimizer, inp)
 
     @skipIfTorchDynamo("https://github.com/pytorch/pytorch/issues/115653")
-    @unittest.skipIf(not TEST_CUDA, "CUDA not available")
+    @unittest.skipIf(not torch.accelerator.is_available(), "Accelerator not available")
     def test_transformer_runtime(
         self,
     ):
@@ -146,7 +148,7 @@ class TestRuntimeEstimator(TestCase):
         )
 
         args = self._init_model_and_args("Transformer", model_args, bsz)
-        actual_runtime = self._measure_actual_cuda_time(self._train_step, args)
+        actual_runtime = self._measure_actual_accelerator_time(self._train_step, args)
         with FakeTensorMode():
             fake_args = self._init_model_and_args("Transformer", model_args, bsz)
             benchmark_estimate = self._runtime_estimate(
@@ -166,7 +168,7 @@ class TestRuntimeEstimator(TestCase):
         # self.assertAlmostEqual(roofline_accuracy, 1.0, delta=0.3)
 
     @skipIfTorchDynamo("https://github.com/pytorch/pytorch/issues/115653")
-    @unittest.skipIf(not TEST_CUDA, "CUDA not available")
+    @unittest.skipIf(not torch.accelerator.is_available(), "Accelerator not available")
     def test_conv_model_runtime(
         self,
     ):
@@ -175,7 +177,7 @@ class TestRuntimeEstimator(TestCase):
         bsz, img_sz = 256, 128
         model_args = ConvArgs(img_sz, num_classes)
         args = self._init_model_and_args("CNN", model_args, bsz)
-        actual_runtime = self._measure_actual_cuda_time(self._train_step, args)
+        actual_runtime = self._measure_actual_accelerator_time(self._train_step, args)
         with FakeTensorMode():
             fake_args = self._init_model_and_args("CNN", model_args, bsz)
             benchmark_estimate = self._runtime_estimate(
