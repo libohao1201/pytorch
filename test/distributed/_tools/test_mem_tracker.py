@@ -84,7 +84,7 @@ class TestMemTracker(TestCase):
         self.assertAlmostEqual(accuracy, 1.0, delta=0.1)
 
     @skipIfTorchDynamo("https://github.com/pytorch/pytorch/issues/115653")
-    @unittest.skipIf(not TEST_CUDA, "CUDA not available")
+    @unittest.skipIf(not torch.accelerator.is_available(), "Accelerator not available")
     def test_tracker_with_activation_checkpointing(
         self,
     ):
