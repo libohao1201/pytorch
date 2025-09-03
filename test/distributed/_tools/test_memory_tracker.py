@@ -5,13 +5,9 @@ import unittest
 import torch
 import torch.nn as nn
 from torch.distributed._tools import MemoryTracker
-<<<<<<< HEAD
 from torch.testing._internal.common_utils import run_tests, TestCase
 
-=======
-from torch.testing._internal.common_cuda import TEST_CUDA
-from torch.testing._internal.common_utils import run_tests,TestCase
->>>>>>> 25e70c13d24 (we will port distributed tests to Intel GPU.)
+
 
 
 class TestMemoryTracker(TestCase):
