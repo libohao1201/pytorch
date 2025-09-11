@@ -20,12 +20,7 @@ using namespace at::sparse;
 #ifndef PYTORCH_JIT_COMPILE_SHADERS
 static auto& lib = mps::MetalShaderLibrary::getBundledLibrary();
 #else
-<<<<<<< HEAD
 #include <ATen/native/mps/Coalesce_metallib.h>
-#endif
-
-=======
-#include <ATen/native/mps/Sparse_metallib.h>
 #endif
 
 
@@ -65,7 +60,6 @@ static Tensor flatten_indices(const Tensor& indices, IntArrayRef size) {
   return flat_indices;
 }
 
->>>>>>> 1e165d03727 (Rebase branch 'libo/baseline' on viable/strict)
 static Tensor compute_output_positions(const Tensor& is_unique) {
 
   int64_t nnz = is_unique.size(0);
