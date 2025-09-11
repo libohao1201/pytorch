@@ -60,6 +60,10 @@ static Tensor flatten_indices(const Tensor& indices, IntArrayRef size) {
   return flat_indices;
 }
 
+<<<<<<< HEAD
+=======
+>>>>>>> 1e165d03727 (Rebase branch 'libo/baseline' on viable/strict)
+>>>>>>> 9f6705349f36394144642bd470905b4dc162d4a4
 static Tensor compute_output_positions(const Tensor& is_unique) {
 
   int64_t nnz = is_unique.size(0);

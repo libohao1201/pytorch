@@ -33,6 +33,11 @@ class TestMemTracker(TestCase):
     @unittest.skipIf(
         not TEST_CUDA and not TEST_XPU, "Neither CUDA or XPU is not available"
     )
+<<<<<<< HEAD
+=======
+
+    @skipIfRocm()
+>>>>>>> 9f6705349f36394144642bd470905b4dc162d4a4
     def test_accelerator_tracker_equivalence(
         self,
     ):
