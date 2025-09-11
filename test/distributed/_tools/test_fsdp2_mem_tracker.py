@@ -116,13 +116,9 @@ class TestTrackerFullyShard1DTrainingCore(FSDPTest):
         acc_max = mem_stats["active_bytes.all.peak"] - pre_acc_active
         accuracy = tracker_max / acc_max
         if self.rank == 0 and debug:
-<<<<<<< HEAD
             print(
                 f"Accuracy: {accuracy} Tracker Max:{tracker_max} Accelerator Max:{acc_max}"
             )
-=======
-            print(f"Accuracy: {accuracy} Tracker Max:{tracker_max} Accelerator Max:{acc_max}")
->>>>>>> f19e6fbee06 (we will port distributed tests to Intel GPU.)
         self.assertAlmostEqual(
             accuracy,
             1.0,
@@ -170,13 +166,10 @@ class TestTrackerFullyShard1DTrainingCore(FSDPTest):
         acc_max = mem_stats["active_bytes.all.peak"] - pre_acc_active
         accuracy = tracker_max / acc_max
         if self.rank == 0 and debug:
-<<<<<<< HEAD
             print(
                 f"Accuracy: {accuracy} Tracker Max:{tracker_max} Accelerator Max:{acc_max}"
             )
-=======
-            print(f"Accuracy: {accuracy} Tracker Max:{tracker_max} Accelerator Max:{acc_max}")
->>>>>>> f19e6fbee06 (we will port distributed tests to Intel GPU.)
+
         self.assertAlmostEqual(
             accuracy,
             1.0,
@@ -269,13 +262,9 @@ class TestTrackerFullyShard1DTrainingCompose(FSDPTest):
         acc_max = mem_stats["active_bytes.all.peak"] - pre_acc_active
         accuracy = tracker_max / acc_max
         if self.rank == 0 and debug:
-<<<<<<< HEAD
             print(
                 f"Accuracy: {accuracy} Tracker Max:{tracker_max} Accelerator Max:{acc_max}"
             )
-=======
-            print(f"Accuracy: {accuracy} Tracker Max:{tracker_max} Accelerator Max:{acc_max}")
->>>>>>> f19e6fbee06 (we will port distributed tests to Intel GPU.)
         self.assertAlmostEqual(
             accuracy,
             1.0,
