@@ -11,9 +11,12 @@ from torch.testing._internal.common_utils import run_tests, TestCase
 =======
 from torch.testing._internal.common_cuda import TEST_CUDA
 from torch.testing._internal.common_utils import run_tests,TestCase
+<<<<<<< HEAD
 >>>>>>> 25e70c13d24 (we will port distributed tests to Intel GPU.)
 
 
+=======
+>>>>>>> f19e6fbee06 (we will port distributed tests to Intel GPU.)
 
 
 class TestMemoryTracker(TestCase):
