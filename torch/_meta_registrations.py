@@ -302,6 +302,13 @@ def logcumsumexp(self, dim):
 # Although the actual FFT launch is different, all the permuting code appears
 # to be the same
 def _exec_fft(out, self, out_sizes, dim, *, forward):
+    # Empty batches are short-circuited by the eager kernels (cuFFT/MKL/MPS all
+    # reject zero-element transforms); mirror that here so tracing does not call
+    # resize_ on a functionalized tensor.
+    from torch.fx.experimental.symbolic_shapes import guard_or_false
+
+    if guard_or_false(out.numel() == 0):
+        return out.new_empty(out_sizes)
     ndim = self.ndim
     signal_ndim = len(dim)
     batch_dims = ndim - signal_ndim
@@ -8199,7 +8206,7 @@ def _amp_foreach_non_finite_check_and_unscale_(self, found_inf, inv_scale):
 
 # From aten/src/ATen/native/UnaryOps.cpp
 @register_meta([aten.nan_to_num.default, aten.nan_to_num.out])
-@out_wrapper()
+@out_wrapper(exact_dtype=True)
 def nan_to_num(self, nan=None, posinf=None, neginf=None):
     return torch.empty_like(self)
 
